@@ -24,8 +24,15 @@ public class ImmutableCompoundCommand implements ICompoundCommand {
         return null;
     }
 
+    /**
+     * Execute all commands in sequence on the given driver.
+     *
+     * @param driver the driver to execute commands on
+     */
     @Override
     public void execute(Job2dDriver driver) {
-
+        for(DriverCommand command: commands) {
+            command.execute(driver);
+        }
     }
 }
