@@ -19,14 +19,29 @@ public class ImmutableCompoundCommand implements ICompoundCommand {
         this.commands = commands;
     }
 
+    /**
+     * Get the name of this compound command.
+     *
+     * @return name of the command, or null if not set
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the number of commands in this compound command.
+     *
+     * @return number of commands
+     */
     public int getCommandCount() {
         return commands.size();
     }
 
+    /**
+     * Get iterator over commands.
+     *
+     * @return iterator over commands
+     */
     @Override
     public Iterator<DriverCommand> iterator() {
         return commands.iterator();
