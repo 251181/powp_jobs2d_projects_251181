@@ -31,10 +31,30 @@ public class CompoundCommandFactory {
 		commands.add(new OperateToCommand(70, 0));
 		commands.add(new OperateToCommand(70, 50));
 		commands.add(new OperateToCommand(20, 50));
-
 		return new CompoundCommand(commands, "TopSecretCommand");
 	}
-
+    /**
+     * Create KiteCommand with all its predefined commands using SimpleComplexCommandBuilder.
+     *
+     * @return KiteCommand as CompoundCommand
+     */
+    public static CompoundCommand createKiteCommand() {
+        SimpleComplexCommandBuilder builder = new SimpleComplexCommandBuilder();
+        return builder
+                .setPosition(0,100)
+                .operateTo(-80,-20)
+                .operateTo(0,-100)
+                .operateTo(0,100)
+                .operateTo(20,120)
+                .operateTo(-20,120)
+                .operateTo(0,100)
+                .operateTo(80,-20)
+                .operateTo(0,-100)
+                .setPosition(80,-20)
+                .operateTo(-80,-20)
+                .name("KiteCommand")
+                .build();
+    }
 	/**
 	 * Create an empty CompoundCommand.
 	 *
