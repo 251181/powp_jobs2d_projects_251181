@@ -16,6 +16,10 @@ public class SetPositionCommand implements DriverCommand {
         this.posY = posY;
     }
 
+    public SetPositionCommand(SetPositionCommand copy) {
+        this(copy.posX, copy.posY);
+    }
+
     @Override
     public void execute(Job2dDriver driver) {
         driver.setPosition(posX, posY);
