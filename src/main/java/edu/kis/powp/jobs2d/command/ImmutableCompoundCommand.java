@@ -71,4 +71,18 @@ public class ImmutableCompoundCommand implements ICompoundCommand {
         }
         return "ImmutableCompoundCommand";
     }
+
+    /**
+     * Returns a deep copy as a CompoundCommand.
+     * Each child command is deep-copied recursively.
+     */
+    @Override
+    public CompoundCommand deepCopy() {
+        CompoundCommand copy = new CompoundCommand();
+        copy.setName(this.name);
+        for (DriverCommand cmd : commands) {
+            copy.addCommand(cmd.deepCopy());
+        }
+        return copy;
+    }
 }
