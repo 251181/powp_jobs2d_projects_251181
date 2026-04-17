@@ -9,10 +9,20 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.kis.powp.appbase.gui.WindowComponent;
 import edu.kis.powp.jobs2d.command.manager.CommandManager;
 import edu.kis.powp.observer.Subscriber;
+import edu.kis.powp.jobs2d.command.io.CommandImporter;
+import edu.kis.powp.jobs2d.command.io.JsonCommandImporter;
+import edu.kis.powp.jobs2d.command.CompoundCommand;
+import edu.kis.powp.jobs2d.command.DriverCommand;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class CommandManagerWindow extends JFrame implements WindowComponent {
 
@@ -56,6 +66,14 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         content.add(currentCommandField, c);
         updateCurrentCommandField();
 
+        JButton btnImportCommands = new JButton("Import command");
+        btnImportCommands.addActionListener((ActionEvent e) -> this.importCommands());
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.weighty = 1;
+        content.add(btnImportCommands, c);
+
         JButton btnClearCommand = new JButton("Clear command");
         btnClearCommand.addActionListener((ActionEvent e) -> this.clearCommand());
         c.fill = GridBagConstraints.BOTH;
@@ -85,6 +103,41 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
     public void deleteObservers() {
         commandManager.getChangePublisher().clearObservers();
         this.updateObserverListField();
+    }
+
+    private void importCommands() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select command file to import");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON & TXT files", "json", "txt");
+        fileChooser.addChoosableFileFilter(filter);
+
+        int userSelection = fileChooser.showOpenDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToImport = fileChooser.getSelectedFile();
+            try {
+                String text = Files.readString(fileToImport.toPath());
+
+                CommandImporter importer;
+                String trimmedText = text.trim();
+
+                if (trimmedText.startsWith("[") || trimmedText.startsWith("{")) {
+                    importer = new JsonCommandImporter();
+                } else {
+                    throw new IllegalArgumentException("TXT file format not recognized. Was expecting JSON.");
+                }
+
+                List<DriverCommand> commands = importer.importCommands(text);
+
+                CompoundCommand compoundCommand = new CompoundCommand(commands, fileToImport.getName());
+                commandManager.setCurrentCommand(compoundCommand);
+            } catch (IOException ex) {
+                System.err.println("Error reading the file: " + ex.getMessage());
+            } catch (Exception ex) {
+                System.err.println("Error parsing the file: " + ex.getMessage());
+            }
+        }
     }
 
     private void updateObserverListField() {
