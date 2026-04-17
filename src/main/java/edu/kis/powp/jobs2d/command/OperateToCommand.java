@@ -29,6 +29,12 @@ public class OperateToCommand implements DriverCommand {
     @Override
     public OperateToCommand deepCopy() {
         return new OperateToCommand(posX, posY);
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
     }
 
 }
