@@ -21,6 +21,11 @@ public enum PaperFormat implements CanvasFormat {
     }
 
     @Override
+    public boolean contains(int x, int y) {
+        return getShape().contains(x, y);
+    }
+
+    @Override
     public String getName() {
         return "Paper Format Canvas (" + name() + " - " + width + "x" + height + ")";
     }

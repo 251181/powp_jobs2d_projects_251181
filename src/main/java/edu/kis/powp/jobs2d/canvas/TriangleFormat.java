@@ -26,6 +26,11 @@ public enum TriangleFormat implements CanvasFormat {
     }
 
     @Override
+    public boolean contains(int x, int y) {
+        return getShape().contains(x, y);
+    }
+
+    @Override
     public String getName() {
         return "Triangle Format Canvas (" + name() + " - " + base + "x" + height + ")";
     }
