@@ -8,7 +8,7 @@ import edu.kis.powp.jobs2d.command.ShapeCommandFactory;
  * The drawable area is the disc of radius (radius - margin) centred at
  * (centerX, centerY).
  */
-public class CircleCanvas extends ShapeBasedCanvas {
+public class CircleCanvas implements ICanvas {
 
     private final int centerX;
     private final int centerY;
@@ -40,7 +40,7 @@ public class CircleCanvas extends ShapeBasedCanvas {
     }
 
     @Override
-    protected ICompoundCommand buildCommand() {
+    public ICompoundCommand toCommand() {
         return ShapeCommandFactory.fromCircle(centerX, centerY, radius, margin);
     }
 

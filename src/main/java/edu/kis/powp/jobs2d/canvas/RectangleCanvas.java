@@ -11,7 +11,7 @@ import edu.kis.powp.jobs2d.command.ShapeCommandFactory;
  * Coordinates are treated as in screen-style (origin at top-left of the
  * drawable area: 0..width on X, 0..height on Y).
  */
-public class RectangleCanvas extends ShapeBasedCanvas {
+public class RectangleCanvas implements ICanvas {
 
     private final int width;
     private final int height;
@@ -40,7 +40,7 @@ public class RectangleCanvas extends ShapeBasedCanvas {
     }
 
     @Override
-    protected ICompoundCommand buildCommand() {
+    public ICompoundCommand toCommand() {
         return ShapeCommandFactory.fromRectangle(width, height, margin);
     }
 
