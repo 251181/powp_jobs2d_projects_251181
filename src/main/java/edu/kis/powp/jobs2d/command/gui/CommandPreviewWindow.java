@@ -9,11 +9,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import edu.kis.legacy.drawer.panel.DrawPanelController;
-import edu.kis.legacy.drawer.shape.LineFactory;
 import edu.kis.powp.appbase.gui.WindowComponent;
 import edu.kis.powp.jobs2d.Job2dDriver;
 import edu.kis.powp.jobs2d.command.DriverCommand;
-import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 
 public class CommandPreviewWindow extends JFrame implements WindowComponent {
 
@@ -33,14 +31,21 @@ public class CommandPreviewWindow extends JFrame implements WindowComponent {
 
         previewDrawController = new DrawPanelController();
         previewDrawController.initialize(previewPanel);
-        previewDriver = new LineDriverAdapter(previewDrawController, LineFactory.getBasicLine(), "Preview Driver");
     }
 
     public void updatePreview(DriverCommand command) {
         previewDrawController.clearPanel();
-        if (command != null) {
+        if (command != null && previewDriver != null) {
             command.execute(previewDriver);
         }
+    }
+
+    public DrawPanelController getDrawPanelController() {
+        return previewDrawController;
+    }
+
+    public void setPreviewDriver(Job2dDriver previewDriver) {
+        this.previewDriver = previewDriver;
     }
 
     @Override

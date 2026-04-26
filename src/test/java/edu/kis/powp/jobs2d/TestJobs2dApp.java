@@ -159,6 +159,12 @@ public class TestJobs2dApp {
         CommandPreviewWindow commandPreview = new CommandPreviewWindow();
         application.addWindowComponent("Command Preview", commandPreview);
 
+        DrawPanelController previewDrawController = commandPreview.getDrawPanelController();
+        Job2dDriver basicDriver = new LineDriverAdapter(previewDrawController, LineFactory.getBasicLine(), "basic");
+        CoordinateTransformer scaleDown = new ScaleTransformer(0.5, 0.5);
+        Job2dDriver scaledDownDriver = new TransformingDriver(basicDriver, scaleDown, "Preview Transform: Scaled 0.5x");
+        commandPreview.setPreviewDriver(scaledDownDriver);
+
         CommandPreviewObserver previewObserver = new CommandPreviewObserver(CommandsFeature.getDriverCommandManager(), commandPreview);
         CommandsFeature.getDriverCommandManager().getChangePublisher().addSubscriber(previewObserver);
     }
