@@ -72,6 +72,8 @@ public class TestJobs2dApp {
         application.addTest("FullNameGetter visitor test",
                 new SelectFullNameGetterVisitorTestListener(new FullNameGetterVisitor()));
 
+        application.addTest("Deep copy visitor test", new SelectDeepCopyVisitorTestListener());
+
         RecordingDriver rec = RecordingFeature.getRecordingDriver();
         boolean initial = rec.isRecordingEnabled();
 
