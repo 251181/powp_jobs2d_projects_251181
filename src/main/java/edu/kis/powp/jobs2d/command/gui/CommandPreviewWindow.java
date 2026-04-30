@@ -18,7 +18,7 @@ public class CommandPreviewWindow extends JFrame implements WindowComponent {
 
     private JPanel previewPanel;
     private DrawPanelController previewDrawController;
-    private Job2dDriver previewDriver;
+    private VisitableDriver previewDriver;
 
     public CommandPreviewWindow() {
         this.setTitle("Command Preview");
@@ -37,7 +37,7 @@ public class CommandPreviewWindow extends JFrame implements WindowComponent {
     public void updatePreview(DriverCommand command) {
         previewDrawController.clearPanel();
         if (command != null && previewDriver != null) {
-            command.execute((VisitableDriver) previewDriver);
+            command.execute(previewDriver);
         }
     }
 
@@ -45,7 +45,7 @@ public class CommandPreviewWindow extends JFrame implements WindowComponent {
         return previewDrawController;
     }
 
-    public void setPreviewDriver(Job2dDriver previewDriver) {
+    public void setPreviewDriver(VisitableDriver previewDriver) {
         this.previewDriver = previewDriver;
     }
 
