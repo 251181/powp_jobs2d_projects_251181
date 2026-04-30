@@ -160,19 +160,30 @@ public class TestJobs2dApp {
         CommandsFeature.getDriverCommandManager().getChangePublisher().addSubscriber(windowObserver);
 
 
-        CommandPreviewWindow commandPreview = new CommandPreviewWindow();
+
+        DrawPanelController previewDrawController = new DrawPanelController();
+        CommandPreviewWindow commandPreview = new CommandPreviewWindow(previewDrawController);
         application.addWindowComponent("Command Preview", commandPreview);
 
-        DrawPanelController previewDrawController = commandPreview.getDrawPanelController();
         VisitableDriver basicDriver =
                 new LineDriverAdapter(previewDrawController, LineFactory.getBasicLine(), "basic");
+
         CoordinateTransformer scaleDown = new ScaleTransformer(0.5, 0.5);
+
         VisitableDriver scaledDownDriver =
                 new TransformingDriver(basicDriver, scaleDown, "Preview Transform: Scaled 0.5x");
+
         commandPreview.setPreviewDriver(scaledDownDriver);
 
-        CommandPreviewObserver previewObserver = new CommandPreviewObserver(CommandsFeature.getDriverCommandManager(), commandPreview);
-        CommandsFeature.getDriverCommandManager().getChangePublisher().addSubscriber(previewObserver);
+        CommandPreviewObserver previewObserver =
+                new CommandPreviewObserver(
+                        CommandsFeature.getDriverCommandManager(),
+                        commandPreview
+                );
+
+        CommandsFeature.getDriverCommandManager()
+                .getChangePublisher()
+                .addSubscriber(previewObserver);
     }
 
     /**

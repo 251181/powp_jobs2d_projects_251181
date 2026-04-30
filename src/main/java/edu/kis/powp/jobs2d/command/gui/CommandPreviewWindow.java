@@ -20,9 +20,12 @@ public class CommandPreviewWindow extends JFrame implements ICommandPreview, Win
     private DrawPanelController previewDrawController;
     private VisitableDriver previewDriver;
 
-    public CommandPreviewWindow() {
+    public CommandPreviewWindow(DrawPanelController drawController) {
+        this.previewDrawController = drawController;
+
         this.setTitle("Command Preview");
         this.setSize(400, 400);
+
         Container content = this.getContentPane();
         content.setLayout(new BorderLayout());
 
@@ -30,7 +33,6 @@ public class CommandPreviewWindow extends JFrame implements ICommandPreview, Win
         previewPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         content.add(previewPanel, BorderLayout.CENTER);
 
-        previewDrawController = new DrawPanelController();
         previewDrawController.initialize(previewPanel);
     }
 
