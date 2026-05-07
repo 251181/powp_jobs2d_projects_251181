@@ -2,7 +2,6 @@ package edu.kis.powp.jobs2d;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,17 +17,36 @@ import edu.kis.powp.jobs2d.drivers.RecordingDriver;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
 import edu.kis.powp.jobs2d.drivers.logger.TrackingLoggerDriver;
 import edu.kis.powp.jobs2d.drivers.packet_composite.CompositeDriver;
-import edu.kis.powp.jobs2d.drivers.transformations.*;
-import edu.kis.powp.jobs2d.drivers.visitor.FullNameGetterVisitor;
-import edu.kis.powp.jobs2d.drivers.visitor.VisitableDriver;
+import edu.kis.powp.jobs2d.drivers.transformations.CoordinateTransformer;
+import edu.kis.powp.jobs2d.drivers.transformations.FlipTransformer;
+import edu.kis.powp.jobs2d.drivers.transformations.RotateTransformer;
+import edu.kis.powp.jobs2d.drivers.transformations.ScaleTransformer;
+import edu.kis.powp.jobs2d.drivers.transformations.TransformingDriver;
 import edu.kis.powp.jobs2d.drivers.usage.LoggerUsageMonitorSubscriber;
 import edu.kis.powp.jobs2d.drivers.usage.UsageMonitorDriver;
-import edu.kis.powp.jobs2d.events.*;
-import edu.kis.powp.jobs2d.features.*;
-import edu.kis.powp.jobs2d.events.SelectLoadRecordedMacroOptionListener;
+import edu.kis.powp.jobs2d.drivers.visitor.FullNameGetterVisitor;
+import edu.kis.powp.jobs2d.drivers.visitor.VisitableDriver;
+import edu.kis.powp.jobs2d.events.SelectCheckCanvasBoundsOptionListener;
 import edu.kis.powp.jobs2d.events.SelectClearPanelOptionListener;
-import edu.kis.powp.jobs2d.events.SelectToggleRecordingOptionListener;
 import edu.kis.powp.jobs2d.events.SelectClearRecordingOptionListener;
+import edu.kis.powp.jobs2d.events.SelectCountCommandsOptionListener;
+import edu.kis.powp.jobs2d.events.SelectFullNameGetterVisitorTestListener;
+import edu.kis.powp.jobs2d.events.SelectLoadImmutableRectangleCommandOptionListener;
+import edu.kis.powp.jobs2d.events.SelectLoadKiteCommandOptionListener;
+import edu.kis.powp.jobs2d.events.SelectLoadRecordedMacroOptionListener;
+import edu.kis.powp.jobs2d.events.SelectLoadSecretCommandOptionListener;
+import edu.kis.powp.jobs2d.events.SelectRunCurrentCommandOptionListener;
+import edu.kis.powp.jobs2d.events.SelectTestFigure2OptionListener;
+import edu.kis.powp.jobs2d.events.SelectTestFigureOptionListener;
+import edu.kis.powp.jobs2d.events.SelectToggleRecordingOptionListener;
+import edu.kis.powp.jobs2d.events.SelectTransformCommandOptionListener;
+import edu.kis.powp.jobs2d.features.CanvasFeature;
+import edu.kis.powp.jobs2d.features.CommandsFeature;
+import edu.kis.powp.jobs2d.features.DrawerFeature;
+import edu.kis.powp.jobs2d.features.DriverFeature;
+import edu.kis.powp.jobs2d.features.ExtensionFeature;
+import edu.kis.powp.jobs2d.features.FeaturesManager;
+import edu.kis.powp.jobs2d.features.RecordingFeature;
 
 public class TestJobs2dApp {
     private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -55,7 +73,8 @@ public class TestJobs2dApp {
      */
     private static void setupCommandTests(Application application) {
         application.addTest("Load secret command", new SelectLoadSecretCommandOptionListener());
-        application.addTest("Load immutable rectangle command", new SelectLoadImmutableRectangleCommandOptionListener());
+        application.addTest("Load immutable rectangle command",
+                new SelectLoadImmutableRectangleCommandOptionListener());
 
         application.addTest("Load kite command", new SelectLoadKiteCommandOptionListener());
         application.addTest("Load recorded macro", new SelectLoadRecordedMacroOptionListener());
@@ -76,11 +95,8 @@ public class TestJobs2dApp {
         application.addTest("FullNameGetter visitor test",
                 new SelectFullNameGetterVisitorTestListener(new FullNameGetterVisitor()));
 
-        application.addComponentMenuElement(
-                DriverFeature.class,
-                "Clear recording",
-                new SelectClearRecordingOptionListener()
-        );
+        application.addComponentMenuElement(DriverFeature.class, "Clear recording",
+                new SelectClearRecordingOptionListener());
     }
 
     /**
@@ -98,16 +114,15 @@ public class TestJobs2dApp {
         driver = new LineDriverAdapter(drawerController, LineFactory.getSpecialLine(), "special");
         DriverFeature.addDriver("Special line Simulator", driver);
 
-
         UsageMonitorDriver usageMonitorDriver = new UsageMonitorDriver();
         usageMonitorDriver.getChangePublisher().addSubscriber(new LoggerUsageMonitorSubscriber(usageMonitorDriver));
         CompositeDriver monitoredDriverComposite = new CompositeDriver("Line Simulator with Usage Monitor");
-        monitoredDriverComposite.addDriver(new LineDriverAdapter(drawerController, LineFactory.getBasicLine(), "basic"));
+        monitoredDriverComposite
+                .addDriver(new LineDriverAdapter(drawerController, LineFactory.getBasicLine(), "basic"));
         monitoredDriverComposite.addDriver(usageMonitorDriver);
         DriverFeature.addDriver(monitoredDriverComposite.toString(), monitoredDriverComposite);
 
         DriverFeature.updateDriverInfo();
-
 
         CoordinateTransformer scale = new ScaleTransformer(2.0, 2.0);
         VisitableDriver scaledDriver = new TransformingDriver(driver, scale, "Transform: Scaled 2x");
@@ -125,14 +140,15 @@ public class TestJobs2dApp {
         VisitableDriver rotatedDriver = new TransformingDriver(driver, rotate, "Transform: Rotated 45 degrees");
         DriverFeature.addDriver(rotatedDriver.toString(), rotatedDriver);
 
-        VisitableDriver scaledAndRotatedDriver = new TransformingDriver(scaledDriver, rotate, "Transform: Scaled 2x & Rotated 45");
+        VisitableDriver scaledAndRotatedDriver = new TransformingDriver(scaledDriver, rotate,
+                "Transform: Scaled 2x & Rotated 45");
         DriverFeature.addDriver(scaledAndRotatedDriver.toString(), scaledAndRotatedDriver);
 
         CompositeDriver chaosCompositeDriver = new CompositeDriver("Chaos Composite Driver");
         chaosCompositeDriver.addDriver(driver);
         chaosCompositeDriver.addDriver(scaledDownDriver);
         DriverFeature.addDriver(chaosCompositeDriver.toString(), chaosCompositeDriver);
-      
+
         driver = new LineDriverAdapter(drawerController, LineFactory.getBasicLine(), "basic");
         VisitableDriver animatedDriver = new RealTimeDriver(driver, 10, 10, "Real-Time Driver 1x speed");
         DriverFeature.addDriver(animatedDriver.toString(), animatedDriver);
@@ -149,7 +165,8 @@ public class TestJobs2dApp {
         ExtensionFeature.addExtension("Logger", loggerDriver);
 
         RecordingDriver rec = RecordingFeature.getRecordingDriver();
-        ExtensionFeature.addMenuToggle("Recording", new SelectToggleRecordingOptionListener(rec), rec.isRecordingEnabled());
+        ExtensionFeature.addMenuToggle("Recording", new SelectToggleRecordingOptionListener(rec),
+                rec.isRecordingEnabled());
     }
 
     private static void setupWindows(Application application) {
@@ -165,12 +182,14 @@ public class TestJobs2dApp {
         application.addWindowComponent("Command Preview", commandPreview);
 
         DrawPanelController previewDrawController = commandPreview.getDrawPanelController();
-        Job2dDriver basicDriver = new LineDriverAdapter(previewDrawController, LineFactory.getBasicLine(), "basic");
+        VisitableDriver basicDriver = new LineDriverAdapter(previewDrawController, LineFactory.getBasicLine(), "basic");
         CoordinateTransformer scaleDown = new ScaleTransformer(0.5, 0.5);
-        Job2dDriver scaledDownDriver = new TransformingDriver(basicDriver, scaleDown, "Preview Transform: Scaled 0.5x");
+        VisitableDriver scaledDownDriver = new TransformingDriver(basicDriver, scaleDown,
+                "Preview Transform: Scaled 0.5x");
         commandPreview.setPreviewDriver(scaledDownDriver);
 
-        CommandPreviewObserver previewObserver = new CommandPreviewObserver(CommandsFeature.getDriverCommandManager(), commandPreview);
+        CommandPreviewObserver previewObserver = new CommandPreviewObserver(CommandsFeature.getDriverCommandManager(),
+                commandPreview);
         CommandsFeature.getDriverCommandManager().getChangePublisher().addSubscriber(previewObserver);
     }
 
@@ -214,8 +233,8 @@ public class TestJobs2dApp {
                 FeaturesManager.setupAllFeatures(app);
 
                 setupDrivers(app);
-                setupExtensions();
                 RecordingFeature.setup(DriverFeature.getDriverManager());
+                setupExtensions();
                 setupPresetTests(app);
                 setupCommandTests(app);
                 setupLogger(app);
