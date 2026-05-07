@@ -17,7 +17,6 @@ public class MouseClickFeature implements IFeature {
         panel.addMouseListener(mouseListener);
 
         application.addComponentMenu(MouseClickFeature.class, "Mouse Click");
-        application.addComponentMenuElement(MouseClickFeature.class,"Toggle mode (Draw / Set Position)",e -> mouseListener.toggleMode());
     }
     @Override
     public String getName() { return "Mouse Click"; }

@@ -6,10 +6,6 @@ import java.awt.event.MouseEvent;
 import edu.kis.powp.jobs2d.drivers.visitor.VisitableDriver;
 
 public class MouseClickDrawPanelListener extends MouseAdapter {
-
-    private enum ClickMode { DRAW_LINE, SET_POSITION }
-
-    private ClickMode mode = ClickMode.DRAW_LINE;
     private final DriverManager driverManager;
 
     public MouseClickDrawPanelListener(DriverManager driverManager) {
@@ -31,9 +27,4 @@ public class MouseClickDrawPanelListener extends MouseAdapter {
             driver.setPosition(driverX, driverY);
 
     }
-
-    public void toggleMode() {
-        mode = (mode == ClickMode.DRAW_LINE) ? ClickMode.SET_POSITION : ClickMode.DRAW_LINE;
-    }
-
 }
