@@ -16,7 +16,6 @@ public class MouseClickFeature implements IFeature {
         mouseListener = new MouseClickDrawPanelListener(DriverFeature.getDriverManager());
         panel.addMouseListener(mouseListener);
 
-        application.addComponentMenu(MouseClickFeature.class, "Mouse Click");
     }
     @Override
     public String getName() { return "Mouse Click"; }
