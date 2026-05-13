@@ -44,11 +44,15 @@ public class ComplexCommandEditor extends JFrame {
         topPanel.add(yField);
 
         add(topPanel, BorderLayout.NORTH);
-        JPanel buttons = new JPanel(new GridLayout(1, 2));
+        JPanel buttons = new JPanel(new GridLayout(2, 2));
 
+        JButton upButton = new JButton("Up");
+        JButton downButton = new JButton("Down");
         JButton removeButton = new JButton("Remove");
         JButton applyButton = new JButton("Apply");
 
+        buttons.add(upButton);
+        buttons.add(downButton);
         buttons.add(removeButton);
         buttons.add(applyButton);
 
@@ -56,10 +60,11 @@ public class ComplexCommandEditor extends JFrame {
 
         commandList.addListSelectionListener(e -> loadCoordinates());
 
+        upButton.addActionListener(e -> moveUp());
+        downButton.addActionListener(e -> moveDown());
         removeButton.addActionListener(e -> removeCommand());
         applyButton.addActionListener(e -> applyCoordinates());
     }
-
 
     private void refreshList() {
         listModel.clear();
@@ -151,6 +156,34 @@ public class ComplexCommandEditor extends JFrame {
                 commandList.setSelectedIndex(index);
             }
         }
+    }
+
+    private void moveUp() {
+        int index = commandList.getSelectedIndex();
+        if (index <= 0) {
+            return;
+        }
+
+        swap(index, index - 1);
+        commandList.setSelectedIndex(index - 1);
+    }
+
+    private void moveDown() {
+        int index = commandList.getSelectedIndex();
+        if (index < 0 || index >= listModel.size() - 1) {
+            return;
+        }
+
+        swap(index, index + 1);
+        commandList.setSelectedIndex(index + 1);
+    }
+
+    private void swap(int i, int j) {
+        List<DriverCommand> commands = getCommands();
+        DriverCommand temp = commands.get(i);
+        commands.set(i, commands.get(j));
+        commands.set(j, temp);
+        refreshList();
     }
 
     private List<DriverCommand> getCommands() {
