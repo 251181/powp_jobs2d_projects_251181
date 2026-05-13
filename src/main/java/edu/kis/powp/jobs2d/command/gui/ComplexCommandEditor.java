@@ -44,16 +44,22 @@ public class ComplexCommandEditor extends JFrame {
         topPanel.add(yField);
 
         add(topPanel, BorderLayout.NORTH);
-        JPanel buttons = new JPanel(new GridLayout(1, 1));
+        JPanel buttons = new JPanel(new GridLayout(1, 2));
 
+        JButton removeButton = new JButton("Remove");
         JButton applyButton = new JButton("Apply");
+
+        buttons.add(removeButton);
         buttons.add(applyButton);
+
         add(buttons, BorderLayout.SOUTH);
 
         commandList.addListSelectionListener(e -> loadCoordinates());
-        applyButton.addActionListener(e -> applyCoordinates());
 
+        removeButton.addActionListener(e -> removeCommand());
+        applyButton.addActionListener(e -> applyCoordinates());
     }
+
 
     private void refreshList() {
         listModel.clear();
@@ -126,6 +132,25 @@ public class ComplexCommandEditor extends JFrame {
         commandManager.setCurrentCommand(workingCopy);
         refreshList();
         commandList.setSelectedIndex(index);
+    }
+
+    private void removeCommand() {
+        int index = commandList.getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
+
+        getCommands().remove(index);
+        commandManager.setCurrentCommand(workingCopy);
+        refreshList();
+
+        if (!listModel.isEmpty()) {
+            if (index >= listModel.size()) {
+                commandList.setSelectedIndex(listModel.size() - 1);
+            } else {
+                commandList.setSelectedIndex(index);
+            }
+        }
     }
 
     private List<DriverCommand> getCommands() {
