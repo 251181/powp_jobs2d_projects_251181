@@ -88,7 +88,7 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         c.weighty = 1;
         content.add(btnClearObservers, c);
 
-        JButton btnEditCommand = new JButton("Edit Complex Command");
+        JButton btnEditCommand = new JButton("Edit command");
         btnEditCommand.addActionListener((ActionEvent e) -> this.openCommandEditor());
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
