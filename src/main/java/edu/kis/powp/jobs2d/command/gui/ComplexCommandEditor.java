@@ -8,7 +8,9 @@ import edu.kis.powp.jobs2d.command.manager.CommandManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.List;
 
 public class ComplexCommandEditor extends JFrame {
 
@@ -16,6 +18,8 @@ public class ComplexCommandEditor extends JFrame {
     private final CompoundCommand workingCopy;
     private final DefaultListModel<String> listModel = new DefaultListModel<>();
     private final JList<String> commandList = new JList<>(listModel);
+    private final JTextField xField = new JTextField();
+    private final JTextField yField = new JTextField();
 
     public ComplexCommandEditor(CommandManager commandManager) {
         this.commandManager = commandManager;
@@ -32,6 +36,23 @@ public class ComplexCommandEditor extends JFrame {
         refreshList();
 
         add(new JScrollPane(commandList), BorderLayout.CENTER);
+        JPanel topPanel = new JPanel(new GridLayout(2, 2));
+
+        topPanel.add(new JLabel("X"));
+        topPanel.add(xField);
+        topPanel.add(new JLabel("Y"));
+        topPanel.add(yField);
+
+        add(topPanel, BorderLayout.NORTH);
+        JPanel buttons = new JPanel(new GridLayout(1, 1));
+
+        JButton applyButton = new JButton("Apply");
+        buttons.add(applyButton);
+        add(buttons, BorderLayout.SOUTH);
+
+        commandList.addListSelectionListener(e -> loadCoordinates());
+        applyButton.addActionListener(e -> applyCoordinates());
+
     }
 
     private void refreshList() {
@@ -54,5 +75,66 @@ public class ComplexCommandEditor extends JFrame {
             return "OperateTo(" + c.getPosX() + ", " + c.getPosY() + ")";
         }
         return command.toString();
+    }
+
+    private void loadCoordinates() {
+        int index = commandList.getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
+        DriverCommand command = getCommands().get(index);
+
+        if (command instanceof SetPositionCommand) {
+            SetPositionCommand c = (SetPositionCommand) command;
+
+            xField.setText(String.valueOf(c.getPosX()));
+            yField.setText(String.valueOf(c.getPosY()));
+        }
+
+        if (command instanceof OperateToCommand) {
+            OperateToCommand c = (OperateToCommand) command;
+            xField.setText(String.valueOf(c.getPosX()));
+            yField.setText(String.valueOf(c.getPosY()));
+        }
+    }
+
+    private void applyCoordinates() {
+        int index = commandList.getSelectedIndex();
+        if (index < 0) {
+            return;
+        }
+
+        int x;
+        int y;
+
+        try {
+            x = Integer.parseInt(xField.getText());
+            y = Integer.parseInt(yField.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid coordinates");
+            return;
+        }
+
+        DriverCommand oldCommand = getCommands().get(index);
+        if (oldCommand instanceof SetPositionCommand) {
+            getCommands().set(index, new SetPositionCommand(x, y));
+        }
+        if (oldCommand instanceof OperateToCommand) {
+            getCommands().set(index, new OperateToCommand(x, y));
+        }
+
+        commandManager.setCurrentCommand(workingCopy);
+        refreshList();
+        commandList.setSelectedIndex(index);
+    }
+
+    private List<DriverCommand> getCommands() {
+        try {
+            Field field = CompoundCommand.class.getDeclaredField("commands");
+            field.setAccessible(true);
+            return (List<DriverCommand>) field.get(workingCopy);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
