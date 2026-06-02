@@ -10,6 +10,8 @@ import edu.kis.powp.jobs2d.command.CompoundCommandFactory;
 import edu.kis.powp.jobs2d.command.ImmutableCompoundCommandFactory;
 import edu.kis.powp.jobs2d.command.manager.CommandHistoryObserver;
 
+import java.util.List;
+
 public class CommandsFeature implements IFeature {
 
     private static CommandManager commandManager;
@@ -73,11 +75,11 @@ public class CommandsFeature implements IFeature {
     }
 
     /**
-     * Returns observer responsible for tracking command history.
+     * Returns history of commands that have been set as current.
      *
-     * @return CommandHistoryObserver instance used in application.
+     * @return immutable command history.
      */
-    public static CommandHistoryObserver getHistoryObserver() {
-        return historyObserver;
+    public static List<String> getCommandHistory() {
+        return historyObserver.getHistory();
     }
 }

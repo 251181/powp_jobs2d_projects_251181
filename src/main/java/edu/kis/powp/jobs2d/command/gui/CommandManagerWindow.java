@@ -241,7 +241,7 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         StringBuilder sb = new StringBuilder();
 
         for (String command :
-                CommandsFeature.getHistoryObserver().getHistory()) {
+                CommandsFeature.getCommandHistory()) {
 
             sb.append(command)
                     .append(System.lineSeparator());
