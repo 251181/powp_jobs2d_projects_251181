@@ -8,6 +8,11 @@ import edu.kis.powp.jobs2d.command.DriverCommand;
 import edu.kis.powp.jobs2d.features.CommandsFeature;
 import edu.kis.powp.observer.Subscriber;
 
+/**
+ * Observer responsible for storing history of all commands
+ * set as current in CommandManager.
+ * Each update stores a textual representation of the command.
+ */
 public class CommandHistoryObserver implements Subscriber {
 
     private final List<String> history = new ArrayList<>();

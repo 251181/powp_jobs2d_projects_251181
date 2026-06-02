@@ -72,6 +72,11 @@ public class CommandsFeature implements IFeature {
         return commandCatalog;
     }
 
+    /**
+     * Returns observer responsible for tracking command history.
+     *
+     * @return CommandHistoryObserver instance used in application.
+     */
     public static CommandHistoryObserver getHistoryObserver() {
         return historyObserver;
     }

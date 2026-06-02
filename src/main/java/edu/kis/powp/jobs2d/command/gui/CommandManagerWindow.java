@@ -233,6 +233,9 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         }
     }
 
+    /**
+     * Updates history text area with all previously selected commands.
+     */
     public void updateHistoryField() {
 
         StringBuilder sb = new StringBuilder();
