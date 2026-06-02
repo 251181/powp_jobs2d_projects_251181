@@ -8,11 +8,13 @@ import edu.kis.powp.jobs2d.command.io.JsonCommandImporterProvider;
 import edu.kis.powp.jobs2d.command.catalog.CommandCatalog;
 import edu.kis.powp.jobs2d.command.CompoundCommandFactory;
 import edu.kis.powp.jobs2d.command.ImmutableCompoundCommandFactory;
+import edu.kis.powp.jobs2d.command.manager.CommandHistoryObserver;
 
 public class CommandsFeature implements IFeature {
 
     private static CommandManager commandManager;
     private static final CommandCatalog commandCatalog = setUpCommandCatalog();
+    private static CommandHistoryObserver historyObserver;
 
     @Override
     public void setup(Application application) {
@@ -29,6 +31,9 @@ public class CommandsFeature implements IFeature {
 
         LoggerCommandChangeObserver loggerObserver = new LoggerCommandChangeObserver();
         commandManager.getChangePublisher().addSubscriber(loggerObserver);
+
+        historyObserver = new CommandHistoryObserver();
+        commandManager.getChangePublisher().addSubscriber(historyObserver);
 
         CommandImporterFactory.registerProvider(new JsonCommandImporterProvider());
     }
@@ -65,5 +70,9 @@ public class CommandsFeature implements IFeature {
      */
     public static CommandCatalog getCommandCatalog() {
         return commandCatalog;
+    }
+
+    public static CommandHistoryObserver getHistoryObserver() {
+        return historyObserver;
     }
 }
