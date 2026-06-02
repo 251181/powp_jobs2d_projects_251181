@@ -26,6 +26,7 @@ import edu.kis.powp.jobs2d.command.io.CommandImporter;
 import edu.kis.powp.jobs2d.command.io.CommandImporterFactory;
 import edu.kis.powp.jobs2d.command.manager.CommandManager;
 import edu.kis.powp.jobs2d.features.CanvasFeature;
+import edu.kis.powp.jobs2d.features.CommandsFeature;
 import edu.kis.powp.observer.Subscriber;
 
 public class CommandManagerWindow extends JFrame implements WindowComponent {
@@ -37,6 +38,7 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
     private JTextArea currentCommandField;
     private String observerListString;
     private JTextArea observerListField;
+    private JTextArea historyField;
 
     private CanvasPanel canvasPanel;
     private JComboBox<ICanvas> canvasSelector;
@@ -67,6 +69,13 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         c.gridy = 1;
         content.add(currentCommandField, c);
         updateCurrentCommandField();
+
+        historyField = new JTextArea("");
+        historyField.setEditable(false);
+        c.weighty = 0.2;
+        c.gridy = 2;
+        content.add(historyField, c);
+        updateHistoryField();
 
         c.weighty = 0.0;
         c.gridy = 2;
@@ -220,6 +229,24 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         } else {
             this.setVisible(true);
         }
+    }
+
+    public void updateHistoryField() {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (String command :
+                CommandsFeature.getHistoryObserver().getHistory()) {
+
+            sb.append(command)
+                    .append(System.lineSeparator());
+        }
+
+        if (sb.length() == 0) {
+            sb.append("No command history");
+        }
+
+        historyField.setText(sb.toString());
     }
 
 }
