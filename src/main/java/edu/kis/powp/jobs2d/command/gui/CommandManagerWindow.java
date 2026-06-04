@@ -32,7 +32,8 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
     private JTextArea currentCommandField;
     private String observerListString;
     private JTextArea observerListField;
-    private JTextArea historyField;
+    private DefaultListModel<String> historyModel;
+    private JList<String> historyList;
 
     private CanvasPanel canvasPanel;
     private JComboBox<ICanvas> canvasSelector;
@@ -64,11 +65,9 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         content.add(currentCommandField, c);
         updateCurrentCommandField();
 
-        historyField = new JTextArea("");
-        historyField.setEditable(false);
-        historyField.setLineWrap(true);
-        historyField.setWrapStyleWord(true);
-        JScrollPane historyScrollPane = new JScrollPane(historyField);
+        historyModel = new DefaultListModel<>();
+        historyList = new JList<>(historyModel);
+        JScrollPane historyScrollPane = new JScrollPane(historyList);
 
         c.weighty = 0.0;
         c.gridy = 2;
@@ -79,20 +78,26 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         content.add(historyScrollPane, c);
         updateHistoryField();
 
+        JButton loadHistoryButton = new JButton("Load from history");
+        loadHistoryButton.addActionListener(e -> loadSelectedHistoryCommand());
         c.weighty = 0.0;
         c.gridy = 4;
+        content.add(loadHistoryButton, c);
+
+        c.weighty = 0.0;
+        c.gridy = 5;
         content.add(new JLabel("Preview canvas:"), c);
 
         canvasSelector = new JComboBox<>(buildCanvasModel());
         canvasSelector.setRenderer(new CanvasListRenderer());
         canvasSelector.setSelectedItem(CanvasFeature.getCanvas());
         canvasSelector.addActionListener(e -> onCanvasSelected());
-        c.gridy = 5;
+        c.gridy = 6;
         content.add(canvasSelector, c);
 
         canvasPanel = new CanvasPanel();
         c.weighty = 1.0;
-        c.gridy = 6;
+        c.gridy = 7;
         content.add(canvasPanel, c);
         syncCanvasFromFeature();
         updateCanvasPanelCommand();
@@ -104,17 +109,17 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         JButton btnImportCommands = new JButton("Import command");
         btnImportCommands.addActionListener((ActionEvent e) -> this.importCommands());
         c.weighty = 0.0;
-        c.gridy = 7;
+        c.gridy = 8;
         content.add(btnImportCommands, c);
 
         JButton btnClearCommand = new JButton("Clear command");
         btnClearCommand.addActionListener((ActionEvent e) -> this.clearCommand());
-        c.gridy = 8;
+        c.gridy = 9;
         content.add(btnClearCommand, c);
 
         JButton btnClearObservers = new JButton("Delete observers");
         btnClearObservers.addActionListener((ActionEvent e) -> this.deleteObservers());
-        c.gridy = 9;
+        c.gridy = 10;
         content.add(btnClearObservers, c);
     }
 
@@ -234,24 +239,33 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
     }
 
     /**
-     * Updates history text area with all previously selected commands.
+     * Updates command history list.
      */
     public void updateHistoryField() {
 
-        StringBuilder sb = new StringBuilder();
+        historyModel.clear();
 
-        for (String command :
-                CommandsFeature.getCommandHistory()) {
+        CommandsFeature
+                .getCommandHistory()
+                .getHistory()
+                .forEach(command ->
+                        historyModel.addElement(command.toString()));
+    }
 
-            sb.append(command)
-                    .append(System.lineSeparator());
+    private void loadSelectedHistoryCommand() {
+
+        int selectedIndex = historyList.getSelectedIndex();
+
+        if (selectedIndex < 0) {
+            return;
         }
 
-        if (sb.length() == 0) {
-            sb.append("No command history");
-        }
-
-        historyField.setText(sb.toString());
+        commandManager.setCurrentCommand(
+                CommandsFeature
+                        .getCommandHistory()
+                        .getHistory()
+                        .get(selectedIndex)
+        );
     }
 
 }
