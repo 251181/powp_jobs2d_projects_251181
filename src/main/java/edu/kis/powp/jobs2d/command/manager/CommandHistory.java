@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * Stores history of commands that have been set as current.
  */
-public class CommandHistory {
-
+public class CommandHistory implements ICommandHistory {
     private final List<DriverCommand> history = new ArrayList<>();
 
     public void addCommand(DriverCommand command) {
